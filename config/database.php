@@ -1,20 +1,12 @@
 <?php
 
-// Database Configuration
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'staffsync_db');
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$database = "employee_management";
-
-// Create Connection
-
-$conn = mysqli_connect($host, $username, $password, $database);
-
-// Check Connection
+$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 if (!$conn) {
-    die("Connection Failed: " . mysqli_connect_error());
+    die("Database Connection Failed: " . mysqli_connect_error());
 }
-
-?>
