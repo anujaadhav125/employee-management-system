@@ -86,8 +86,33 @@ require_once '../includes/topbar.php';
 
                     <div class="col-md-6 mb-3">
                         <label>Department</label>
-                        <input type="text" name="department" class="form-control"
-                            value="<?= htmlspecialchars($employee['department']); ?>">
+                        <?php
+
+                        $deptQuery = "SELECT department_name
+                           FROM departments
+                           WHERE status='Active'
+                           ORDER BY department_name ASC";
+
+                        $deptResult = mysqli_query($conn, $deptQuery);
+
+                        ?>
+
+                        <select name="department" class="form-select" required>
+
+                        <?php while($dept = mysqli_fetch_assoc($deptResult)){ ?>
+
+                        <option
+                        value="<?= htmlspecialchars($dept['department_name']); ?>"
+
+                        <?= ($employee['department']==$dept['department_name']) ? 'selected' : ''; ?>>
+
+                        <?= htmlspecialchars($dept['department_name']); ?>
+
+                        </option>
+
+                    <?php } ?>
+
+                        </select>
                     </div>
 
                     <div class="col-md-6 mb-3">

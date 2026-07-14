@@ -72,8 +72,32 @@ require_once '../includes/topbar.php';
 
                         <label>Department</label>
 
-                        <input type="text" name="department" class="form-control">
+                        <?php
 
+$deptQuery = "SELECT department_name
+              FROM departments
+              WHERE status='Active'
+              ORDER BY department_name ASC";
+
+$deptResult = mysqli_query($conn, $deptQuery);
+
+?>
+
+<select name="department" class="form-select" required>
+
+    <option value="">Select Department</option>
+
+    <?php while($dept = mysqli_fetch_assoc($deptResult)){ ?>
+
+        <option value="<?= htmlspecialchars($dept['department_name']); ?>">
+
+            <?= htmlspecialchars($dept['department_name']); ?>
+
+        </option>
+
+    <?php } ?>
+
+</select>
                     </div>
 
                     <div class="col-md-6 mb-3">
