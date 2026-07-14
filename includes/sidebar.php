@@ -15,7 +15,9 @@
     <a href="../department/index.php">
         <i class="bi bi-building"></i> Departments
     </a>
-
+    <a href="../designation/index.php">
+        <i class="bi bi-diagram-3"></i> Designations
+    </a>
     <a href="#">
         <i class="bi bi-calendar-check"></i> Attendance
     </a>
