@@ -87,15 +87,9 @@ require_once '../includes/topbar.php';
 
                             <td>
 
-                                <?php if($row['status']=="Active"){ ?>
-
-                                    <span class="badge bg-success">Active</span>
-
-                                <?php }else{ ?>
-
-                                    <span class="badge bg-danger">Inactive</span>
-
-                                <?php } ?>
+                               <span class="badge <?= ($row['status']=='Active') ? 'bg-success' : 'bg-secondary'; ?>">
+                                    <?= htmlspecialchars($row['status']); ?>
+                                </span>
 
                             </td>
 
@@ -113,7 +107,9 @@ require_once '../includes/topbar.php';
 
                                 </a>
 
-                                <a href="delete.php?id=<?= $row['id']; ?>" class="btn btn-danger btn-sm">
+                                <a href="delete.php?id=<?= $row['id']; ?>"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to deactivate this employee?');">
 
                                     Delete
 
