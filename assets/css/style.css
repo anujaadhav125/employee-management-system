@@ -65,3 +65,62 @@ body{
     color: var(--white);
     transform: translateY(-2px);
 }
+body{
+    background:#f5f7fb;
+    font-family:Segoe UI,sans-serif;
+}
+
+.sidebar{
+    width:250px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:#2E1A47;
+    color:white;
+}
+
+.logo{
+    padding:25px;
+    font-size:26px;
+    text-align:center;
+    font-weight:bold;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:15px 25px;
+    transition:.3s;
+}
+
+.sidebar a:hover{
+    background:#6C4CF1;
+}
+
+.main{
+    margin-left:250px;
+}
+
+.topbar{
+    background:white;
+    padding:18px 30px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.dashboard{
+    padding:30px;
+}
+
+.stat-card{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-5px);
+}
