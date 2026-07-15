@@ -8,7 +8,7 @@ if (!isLoggedIn()) {
 
 $user = getLoggedInUser();
 
-// Dashboard Counts
+/* Dashboard Counts */
 
 $totalEmployees = mysqli_fetch_assoc(
     mysqli_query($conn, "SELECT COUNT(*) AS total FROM employees")
@@ -26,6 +26,49 @@ $inactiveEmployees = mysqli_fetch_assoc(
     mysqli_query($conn, "SELECT COUNT(*) AS total FROM employees WHERE status='Inactive'")
 )['total'];
 
+/* Employees by Department */
+
+$deptLabels = [];
+$deptCounts = [];
+
+$query = "SELECT department, COUNT(*) AS total
+          FROM employees
+          GROUP BY department";
+
+$result = mysqli_query($conn, $query);
+
+while($row = mysqli_fetch_assoc($result)){
+
+    $deptLabels[] = $row['department'];
+    $deptCounts[] = $row['total'];
+
+}
+
+/* Attendance Chart */
+
+$today = date('Y-m-d');
+
+$present = mysqli_fetch_assoc(mysqli_query(
+$conn,
+"SELECT COUNT(*) total FROM attendance
+WHERE attendance_date='$today'
+AND status='Present'"
+))['total'];
+
+$absent = mysqli_fetch_assoc(mysqli_query(
+$conn,
+"SELECT COUNT(*) total FROM attendance
+WHERE attendance_date='$today'
+AND status='Absent'"
+))['total'];
+
+$leave = mysqli_fetch_assoc(mysqli_query(
+$conn,
+"SELECT COUNT(*) total FROM attendance
+WHERE attendance_date='$today'
+AND status='Leave'"
+))['total'];
+
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 require_once '../includes/topbar.php';
@@ -37,74 +80,92 @@ require_once '../includes/topbar.php';
 <div class="row g-4">
 
 <div class="col-md-3">
-
-<div class="card stat-card text-center">
-
+<div class="card stat-card text-center shadow">
 <div class="card-body">
-
 <h1><?= $totalEmployees; ?></h1>
-
 <p>Total Employees</p>
-
 </div>
-
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card stat-card text-center">
-
+<div class="card stat-card text-center shadow">
 <div class="card-body">
-
 <h1><?= $totalDepartments; ?></h1>
-
 <p>Departments</p>
-
 </div>
-
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card stat-card text-center">
-
+<div class="card stat-card text-center shadow">
 <div class="card-body">
-
 <h1><?= $activeEmployees; ?></h1>
-
 <p>Active Employees</p>
-
 </div>
-
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card stat-card text-center">
-
+<div class="card stat-card text-center shadow">
 <div class="card-body">
-
 <h1><?= $inactiveEmployees; ?></h1>
-
 <p>Inactive Employees</p>
-
+</div>
+</div>
 </div>
 
 </div>
 
-</div>
+<!-- Charts -->
 
-</div>
+<div class="row mt-4">
 
-<br>
+<div class="col-md-6">
 
 <div class="card shadow">
+
+<div class="card-header">
+
+<h5 class="mb-0">Employees by Department</h5>
+
+</div>
+
+<div class="card-body">
+
+<canvas id="departmentChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card shadow">
+
+<div class="card-header">
+
+<h5 class="mb-0">Today's Attendance</h5>
+
+</div>
+
+<div class="card-body">
+
+<canvas id="attendanceChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Recent Employees -->
+
+<div class="card shadow mt-4">
 
 <div class="card-header">
 
@@ -121,11 +182,8 @@ require_once '../includes/topbar.php';
 <tr>
 
 <th>Employee Code</th>
-
 <th>Name</th>
-
 <th>Department</th>
-
 <th>Status</th>
 
 </tr>
@@ -138,9 +196,9 @@ require_once '../includes/topbar.php';
 
 $query = "SELECT * FROM employees ORDER BY id DESC LIMIT 5";
 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn,$query);
 
-while($row = mysqli_fetch_assoc($result)){
+while($row=mysqli_fetch_assoc($result)){
 
 ?>
 
@@ -154,7 +212,7 @@ while($row = mysqli_fetch_assoc($result)){
 
 <td>
 
-<span class="badge <?= ($row['status']=='Active') ? 'bg-success' : 'bg-secondary'; ?>">
+<span class="badge <?= ($row['status']=='Active')?'bg-success':'bg-secondary'; ?>">
 
 <?= htmlspecialchars($row['status']); ?>
 
@@ -176,4 +234,174 @@ while($row = mysqli_fetch_assoc($result)){
 
 </div>
 
+<script>
+
 <?php require_once '../includes/footer.php'; ?>
+
+<?php require_once '../includes/footer.php'; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ===========================
+    // Employees by Department
+    // ===========================
+
+    const deptCanvas = document.getElementById("departmentChart");
+
+    if (deptCanvas) {
+
+        new Chart(deptCanvas, {
+
+            type: "bar",
+
+            data: {
+
+                labels: <?= json_encode($deptLabels); ?>,
+
+                datasets: [{
+
+                    label: "Employees",
+
+                    data: <?= json_encode($deptCounts); ?>,
+
+                    backgroundColor: "#6f42c1",
+
+                    borderRadius: 10,
+
+                    borderSkipped: false
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                indexAxis: "y",
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                },
+
+                animation: {
+
+                    duration: 1500
+
+                },
+
+                scales: {
+
+                    x: {
+
+                        beginAtZero: true,
+
+                        grid: {
+
+                            color: "#eeeeee"
+
+                        }
+
+                    },
+
+                    y: {
+
+                        grid: {
+
+                            display: false
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    // ===========================
+    // Today's Attendance
+    // ===========================
+
+    const attendanceCanvas = document.getElementById("attendanceChart");
+
+    if (attendanceCanvas) {
+
+        new Chart(attendanceCanvas, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: ["Present","Absent","Leave"],
+
+                datasets: [{
+
+                    data: [
+
+                        <?= $present ?>,
+
+                        <?= $absent ?>,
+
+                        <?= $leave ?>
+
+                    ],
+
+                    backgroundColor: [
+
+                        "#198754",
+
+                        "#dc3545",
+
+                        "#ffc107"
+
+                    ],
+
+                    borderWidth: 2
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                cutout: "65%",
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                },
+
+                animation: {
+
+                    animateRotate: true,
+
+                    duration: 1800
+
+                }
+
+            }
+
+        });
+
+    }
+
+});
+</script>
