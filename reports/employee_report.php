@@ -13,22 +13,39 @@ require_once '../includes/sidebar.php';
 require_once '../includes/topbar.php';
 
 $search = $_GET['search'] ?? '';
+$department = $_GET['department'] ?? '';
+$status = $_GET['status'] ?? '';
 
-$query = "SELECT * FROM employees";
+$query = "SELECT * FROM employees WHERE 1=1";
 
 if($search != ""){
-
     $search = mysqli_real_escape_string($conn,$search);
+    $query .= " AND (
+        full_name LIKE '%$search%'
+        OR employee_code LIKE '%$search%'
+        OR email LIKE '%$search%'
+    )";
+}
 
-    $query .= " WHERE full_name LIKE '%$search%'
-                OR employee_code LIKE '%$search%'
-                OR department LIKE '%$search%'";
+if($department != ""){
+    $department = mysqli_real_escape_string($conn,$department);
+    $query .= " AND department='$department'";
+}
 
+if($status != ""){
+    $status = mysqli_real_escape_string($conn,$status);
+    $query .= " AND status='$status'";
 }
 
 $query .= " ORDER BY full_name ASC";
 
 $result = mysqli_query($conn,$query);
+
+$departments = mysqli_query($conn,"
+SELECT DISTINCT department
+FROM employees
+ORDER BY department
+");
 
 ?>
 
@@ -36,19 +53,23 @@ $result = mysqli_query($conn,$query);
 
 <div class="card shadow">
 
-<div class="card-header d-flex justify-content-between">
+<div class="card-header d-flex justify-content-between align-items-center">
 
-<h4>Employee Report</h4>
+<h4 class="mb-0">Employee Report</h4>
 
 <div>
 
 <a href="export_excel.php" class="btn btn-success">
+
+<i class="bi bi-file-earmark-excel"></i>
 
 Export Excel
 
 </a>
 
 <a href="export_pdf.php" class="btn btn-danger">
+
+<i class="bi bi-file-earmark-pdf"></i>
 
 Export PDF
 
@@ -62,7 +83,7 @@ Export PDF
 
 <form method="GET">
 
-<div class="row">
+<div class="row g-3">
 
 <div class="col-md-4">
 
@@ -75,7 +96,57 @@ value="<?= htmlspecialchars($search); ?>">
 
 </div>
 
-<div class="col-md-2">
+<div class="col-md-3">
+
+<select
+name="department"
+class="form-select">
+
+<option value="">All Departments</option>
+
+<?php while($dept=mysqli_fetch_assoc($departments)){ ?>
+
+<option
+value="<?= htmlspecialchars($dept['department']); ?>"
+<?= ($department==$dept['department'])?'selected':'';?>>
+
+<?= htmlspecialchars($dept['department']); ?>
+
+</option>
+
+<?php } ?>
+
+</select>
+
+</div>
+
+<div class="col-md-3">
+
+<select
+name="status"
+class="form-select">
+
+<option value="">All Status</option>
+
+<option value="Active"
+<?=($status=="Active")?"selected":"";?>>
+
+Active
+
+</option>
+
+<option value="Inactive"
+<?=($status=="Inactive")?"selected":"";?>>
+
+Inactive
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-2 d-grid">
 
 <button class="btn btn-primary">
 
@@ -85,15 +156,27 @@ Search
 
 </div>
 
+<div class="col-md-2 d-grid">
+
+<a
+href="employee_report.php"
+class="btn btn-secondary">
+
+Reset
+
+</a>
+
+</div>
+
 </div>
 
 </form>
 
-<br>
+<hr>
 
 <div class="table-responsive">
 
-<table class="table table-bordered table-hover">
+<table class="table table-bordered table-hover align-middle">
 
 <thead class="table-dark">
 
@@ -117,7 +200,13 @@ Search
 
 <tbody>
 
-<?php while($row=mysqli_fetch_assoc($result)){ ?>
+<?php
+
+if(mysqli_num_rows($result)>0){
+
+while($row=mysqli_fetch_assoc($result)){
+
+?>
 
 <tr>
 
@@ -133,11 +222,41 @@ Search
 
 <td>
 
-<span class="badge <?= ($row['status']=="Active")?"bg-success":"bg-danger"; ?>">
+<?php if($row['status']=="Active"){ ?>
 
-<?= htmlspecialchars($row['status']); ?>
+<span class="badge bg-success">
+
+Active
 
 </span>
+
+<?php }else{ ?>
+
+<span class="badge bg-danger">
+
+Inactive
+
+</span>
+
+<?php } ?>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="6" class="text-center">
+
+No Employees Found
 
 </td>
 

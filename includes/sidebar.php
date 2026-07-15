@@ -17,10 +17,29 @@
     </a>
     <a href="../designation/index.php">
         <i class="bi bi-diagram-3"></i> Designations
-    <a href="../attendance/index.php" class="nav-link">
+   <li class="nav-item">
+
+    <a class="nav-link" href="../attendance/index.php">
+
         <i class="bi bi-calendar-check"></i>
+
         <span>Attendance</span>
+
     </a>
+
+</li>
+
+<li class="nav-item ms-3">
+
+    <a class="nav-link" href="../reports/attendance_report.php">
+
+        <i class="bi bi-file-earmark-text"></i>
+
+        <span>Attendance Report</span>
+
+    </a>
+
+</li>
 
      <a href="../reports/employee_report.php">
         <i class="bi bi-file-earmark-bar-graph"></i>
