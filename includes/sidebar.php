@@ -17,15 +17,15 @@
     </a>
     <a href="../designation/index.php">
         <i class="bi bi-diagram-3"></i> Designations
-    </a>
-    <a href="#">
-        <i class="bi bi-calendar-check"></i> Attendance
-    </a>
-
-    <a href="#">
-        <i class="bi bi-file-earmark-bar-graph"></i> Reports
+    <a href="../attendance/index.php" class="nav-link">
+        <i class="bi bi-calendar-check"></i>
+        <span>Attendance</span>
     </a>
 
+     <a href="../reports/employee_report.php">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        <span>Reports</span>
+    </a>
     <a href="../auth/logout.php">
         <i class="bi bi-box-arrow-right"></i> Logout
     </a>
