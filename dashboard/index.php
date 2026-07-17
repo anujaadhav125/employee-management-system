@@ -10,320 +10,311 @@ $user = getLoggedInUser();
 
 /* ===============================
    Dashboard Statistics
-================================ */
+=============================== */
 
-// Total Employees
 $totalEmployees = mysqli_fetch_assoc(
-    mysqli_query($conn, "SELECT COUNT(*) AS total FROM employees")
+    mysqli_query($conn,"SELECT COUNT(*) total FROM employees")
 )['total'];
 
-// Total Departments
 $totalDepartments = mysqli_fetch_assoc(
-    mysqli_query($conn, "SELECT COUNT(*) AS total FROM departments")
+    mysqli_query($conn,"SELECT COUNT(*) total FROM departments")
 )['total'];
 
-// Active Employees
 $activeEmployees = mysqli_fetch_assoc(
-    mysqli_query($conn, "SELECT COUNT(*) AS total FROM employees WHERE status='Active'")
+    mysqli_query($conn,"SELECT COUNT(*) total FROM employees WHERE status='Active'")
 )['total'];
 
-// Inactive Employees
 $inactiveEmployees = mysqli_fetch_assoc(
-    mysqli_query($conn, "SELECT COUNT(*) AS total FROM employees WHERE status='Inactive'")
+    mysqli_query($conn,"SELECT COUNT(*) total FROM employees WHERE status='Inactive'")
 )['total'];
 
 
 /* ===============================
    Employees By Department
-================================ */
+=============================== */
 
 $deptLabels = [];
 $deptCounts = [];
 
-$query = mysqli_query($conn, "
-    SELECT department, COUNT(*) AS total
-    FROM employees
-    GROUP BY department
+$result = mysqli_query($conn,"
+SELECT department,COUNT(*) total
+FROM employees
+GROUP BY department
 ");
 
-while ($row = mysqli_fetch_assoc($query)) {
-    $deptLabels[] = $row['department'];
-    $deptCounts[] = $row['total'];
+while($row=mysqli_fetch_assoc($result)){
+
+    $deptLabels[]=$row['department'];
+    $deptCounts[]=$row['total'];
+
 }
 
 
 /* ===============================
-   Today's Attendance
-================================ */
+   Attendance
+=============================== */
 
-$today = date("Y-m-d");
+$today=date("Y-m-d");
 
-$present = mysqli_fetch_assoc(
-    mysqli_query($conn, "
-        SELECT COUNT(*) AS total
-        FROM attendance
-        WHERE attendance_date='$today'
-        AND status='Present'
-    ")
-)['total'];
+$present=mysqli_fetch_assoc(mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM attendance
+WHERE attendance_date='$today'
+AND status='Present'
+"))['total'];
 
-$absent = mysqli_fetch_assoc(
-    mysqli_query($conn, "
-        SELECT COUNT(*) AS total
-        FROM attendance
-        WHERE attendance_date='$today'
-        AND status='Absent'
-    ")
-)['total'];
+$absent=mysqli_fetch_assoc(mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM attendance
+WHERE attendance_date='$today'
+AND status='Absent'
+"))['total'];
 
-$leave = mysqli_fetch_assoc(
-    mysqli_query($conn, "
-        SELECT COUNT(*) AS total
-        FROM attendance
-        WHERE attendance_date='$today'
-        AND status='Leave'
-    ")
-)['total'];
+$leave=mysqli_fetch_assoc(mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM attendance
+WHERE attendance_date='$today'
+AND status='Leave'
+"))['total'];
 
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 require_once '../includes/topbar.php';
-
 ?>
 
 <div class="dashboard">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="dashboard-header">
 
-        <div>
-            <h2 class="fw-bold mb-1">
-                Welcome, <?= htmlspecialchars($user['name']); ?> 👋
-            </h2>
+<div>
 
-            <p class="text-muted mb-0">
-                Manage your organization efficiently with StaffSync.
-            </p>
-        </div>
+<h2>
+Welcome,
+<?= htmlspecialchars($user['name']); ?> 👋
+</h2>
 
-        <div class="text-end">
-            <h5 class="fw-bold mb-0"><?= date("d M Y"); ?></h5>
-            <small class="text-muted">HR Management Dashboard</small>
-        </div>
-
-    </div>
-
-    <!-- Statistics -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- Employees -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-
-                <div class="card-body d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">Total Employees</small>
-
-                        <h2 class="fw-bold mt-2">
-                            <?= $totalEmployees; ?>
-                        </h2>
-
-                    </div>
-
-                    <div class="fs-2 text-primary">
-
-                        <i class="bi bi-people-fill"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Departments -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-
-                <div class="card-body d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">Departments</small>
-
-                        <h2 class="fw-bold mt-2">
-                            <?= $totalDepartments; ?>
-                        </h2>
-
-                    </div>
-
-                    <div class="fs-2 text-success">
-
-                        <i class="bi bi-building"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Active -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-
-                <div class="card-body d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">Active Employees</small>
-
-                        <h2 class="fw-bold mt-2">
-                            <?= $activeEmployees; ?>
-                        </h2>
-
-                    </div>
-
-                    <div class="fs-2 text-success">
-
-                        <i class="bi bi-person-check-fill"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Inactive -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-
-                <div class="card-body d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">Inactive Employees</small>
-
-                        <h2 class="fw-bold mt-2">
-                            <?= $inactiveEmployees; ?>
-                        </h2>
-
-                    </div>
-
-                    <div class="fs-2 text-danger">
-
-                        <i class="bi bi-person-x-fill"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-    <!-- =========================
-     Charts
-========================= -->
-
-<div class="row g-4">
-
-    <!-- Employees by Department -->
-
-    <div class="col-lg-7">
-
-        <div class="card shadow-sm border-0 rounded-4 h-100">
-
-            <div class="card-header bg-white border-0">
-
-                <h5 class="fw-bold mb-0">
-                    <i class="bi bi-bar-chart-fill text-primary me-2"></i>
-                    Employees by Department
-                </h5>
-
-            </div>
-
-            <div class="card-body">
-
-                <div style="height:350px;">
-
-                    <canvas id="departmentChart"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Attendance -->
-
-    <div class="col-lg-5">
-
-        <div class="card shadow-sm border-0 rounded-4 h-100">
-
-            <div class="card-header bg-white border-0">
-
-                <h5 class="fw-bold mb-0">
-                    <i class="bi bi-pie-chart-fill text-success me-2"></i>
-                    Today's Attendance
-                </h5>
-
-            </div>
-
-            <div class="card-body">
-
-                <div style="height:350px;">
-
-                    <canvas id="attendanceChart"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+<p>
+Manage your organization efficiently with StaffSync HRMS.
+</p>
 
 </div>
 
-<!-- =========================
+<div class="text-end">
+
+<h5 class="fw-bold">
+<?= date("d M Y"); ?>
+</h5>
+
+<p class="text-muted">
+HR Management Dashboard
+</p>
+
+</div>
+
+</div>
+
+
+<div class="row g-4 mb-4">
+
+<!-- Employees -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="dashboard-card employees-card">
+
+<div class="card-body d-flex justify-content-between align-items-center">
+
+<div>
+
+<h6>Total Employees</h6>
+
+<h2><?= $totalEmployees ?></h2>
+
+</div>
+
+<div class="dashboard-icon">
+
+<i class="bi bi-people-fill"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Departments -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="dashboard-card department-card">
+
+<div class="card-body d-flex justify-content-between align-items-center">
+
+<div>
+
+<h6>Departments</h6>
+
+<h2><?= $totalDepartments ?></h2>
+
+</div>
+
+<div class="dashboard-icon">
+
+<i class="bi bi-building"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Active -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="dashboard-card active-card">
+
+<div class="card-body d-flex justify-content-between align-items-center">
+
+<div>
+
+<h6>Active Employees</h6>
+
+<h2><?= $activeEmployees ?></h2>
+
+</div>
+
+<div class="dashboard-icon">
+
+<i class="bi bi-person-check-fill"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Inactive -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="dashboard-card inactive-card">
+
+<div class="card-body d-flex justify-content-between align-items-center">
+
+<div>
+
+<h6>Inactive Employees</h6>
+
+<h2><?= $inactiveEmployees ?></h2>
+
+</div>
+
+<div class="dashboard-icon">
+
+<i class="bi bi-person-x-fill"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- Charts -->
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="card chart-card">
+
+<div class="card-header">
+
+<h5>
+
+<i class="bi bi-bar-chart-fill text-primary me-2"></i>
+
+Employees by Department
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+<div style="height:370px;">
+
+<canvas id="departmentChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card chart-card">
+
+<div class="card-header">
+
+<h5>
+
+<i class="bi bi-pie-chart-fill text-success me-2"></i>
+
+Today's Attendance
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+<div style="height:370px;">
+
+<canvas id="attendanceChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<!-- ===========================
      Recent Employees
-========================= -->
+=========================== -->
 
-<div class="card shadow-sm border-0 rounded-4 mt-4">
+<div class="card mt-4">
 
-    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+    <div class="card-header d-flex justify-content-between align-items-center">
 
-        <h5 class="fw-bold mb-0">
-
+        <h5 class="mb-0">
             <i class="bi bi-clock-history text-primary me-2"></i>
-
             Recent Employees
-
         </h5>
 
         <a href="../employee/index.php" class="btn btn-primary btn-sm">
-
             View All
-
         </a>
 
     </div>
@@ -334,16 +325,13 @@ require_once '../includes/topbar.php';
 
             <table class="table table-hover align-middle">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
 
                         <th>Employee Code</th>
-
                         <th>Name</th>
-
                         <th>Department</th>
-
                         <th>Status</th>
 
                     </tr>
@@ -352,68 +340,88 @@ require_once '../includes/topbar.php';
 
                 <tbody>
 
-                <?php
+<?php
 
-                $recent = mysqli_query($conn,"
-                    SELECT *
-                    FROM employees
-                    ORDER BY id DESC
-                    LIMIT 5
-                ");
+$recent=mysqli_query($conn,"
+SELECT *
+FROM employees
+ORDER BY id DESC
+LIMIT 5
+");
 
-                if(mysqli_num_rows($recent)>0):
+if(mysqli_num_rows($recent)>0){
 
-                    while($row=mysqli_fetch_assoc($recent)):
+while($row=mysqli_fetch_assoc($recent)){
 
-                ?>
+?>
 
-                    <tr>
+<tr>
 
-                        <td><?= htmlspecialchars($row['employee_code']); ?></td>
+<td>
 
-                        <td><?= htmlspecialchars($row['full_name']); ?></td>
+<strong>
 
-                        <td><?= htmlspecialchars($row['department']); ?></td>
+<?= htmlspecialchars($row['employee_code']); ?>
 
-                        <td>
+</strong>
 
-                            <?php if($row['status']=="Active"): ?>
+</td>
 
-                                <span class="badge bg-success">
-                                    Active
-                                </span>
+<td>
 
-                            <?php else: ?>
+<?= htmlspecialchars($row['full_name']); ?>
 
-                                <span class="badge bg-danger">
-                                    Inactive
-                                </span>
+</td>
 
-                            <?php endif; ?>
+<td>
 
-                        </td>
+<?= htmlspecialchars($row['department']); ?>
 
-                    </tr>
+</td>
 
-                <?php
+<td>
 
-                    endwhile;
+<?php if($row['status']=="Active"){ ?>
 
-                else:
+<span class="badge bg-success">
 
-                ?>
+Active
 
-                    <tr>
+</span>
 
-                        <td colspan="4" class="text-center">
+<?php } else { ?>
 
-                            No Employees Found
+<span class="badge bg-danger">
 
-                        </td>
+Inactive
 
-                    </tr>
+</span>
 
-                <?php endif; ?>
+<?php } ?>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="4" class="text-center text-muted">
+
+No Employees Found
+
+</td>
+
+</tr>
+
+<?php } ?>
 
                 </tbody>
 
@@ -424,243 +432,261 @@ require_once '../includes/topbar.php';
     </div>
 
 </div>
+
+</div>
+
+<!-- ===========================
+        CHART DATA
+=========================== -->
+
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+const departmentLabels = <?= json_encode($deptLabels); ?>;
 
-    // ==========================
-    // Employees by Department
-    // ==========================
+const departmentCounts = <?= json_encode($deptCounts); ?>;
 
-    const departmentChart = document.getElementById("departmentChart");
+const attendanceData = [
 
-    if (departmentChart) {
+<?= $present ?>,
 
-        new Chart(departmentChart, {
+<?= $absent ?>,
 
-            type: "bar",
+<?= $leave ?>
 
-            data: {
+];
 
-                labels: <?= json_encode($deptLabels); ?>,
+</script>
 
-                datasets: [{
+<!-- Chart JS -->
 
-                    label: "Employees",
+<script>
 
-                    data: <?= json_encode($deptCounts); ?>,
+document.addEventListener("DOMContentLoaded",()=>{
 
-                    backgroundColor: [
+/* ======================
+Department Chart
+====================== */
 
-                        "#6F42C1",
-                        "#0D6EFD",
-                        "#198754",
-                        "#FD7E14",
-                        "#DC3545",
-                        "#20C997",
-                        "#6610F2"
+const bar=document.getElementById("departmentChart");
 
-                    ],
+if(bar){
 
-                    borderRadius: 10,
-                    borderSkipped: false
+new Chart(bar,{
 
-                }]
+type:"bar",
 
-            },
+data:{
 
-            options: {
+labels:departmentLabels,
 
-                responsive: true,
+datasets:[{
 
-                maintainAspectRatio: false,
+label:"Employees",
 
-                animation: {
+data:departmentCounts,
 
-                    duration: 1500
+backgroundColor:[
 
-                },
+"#6366F1",
 
-                plugins: {
+"#3B82F6",
 
-                    legend: {
+"#10B981",
 
-                        display: false
+"#F59E0B",
 
-                    }
+"#EF4444",
 
-                },
+"#8B5CF6",
 
-                scales: {
+"#06B6D4"
 
-                    x: {
+],
 
-                        grid: {
+borderRadius:12,
 
-                            display: false
+borderSkipped:false
 
-                        },
+}]
 
-                        ticks: {
+},
 
-                            color: "#374151",
+options:{
 
-                            font: {
+responsive:true,
 
-                                size: 12,
+maintainAspectRatio:false,
 
-                                weight: "bold"
+plugins:{
 
-                            }
+legend:{display:false}
 
-                        }
+},
 
-                    },
+animation:{
 
-                    y: {
+duration:1800
 
-                        beginAtZero: true,
+},
 
-                        ticks: {
+scales:{
 
-                            stepSize: 1,
+x:{
 
-                            precision: 0,
+grid:{display:false},
 
-                            color: "#374151",
+ticks:{
 
-                            font: {
+color:"#374151",
 
-                                size: 12,
+font:{
 
-                                weight: "bold"
+size:13,
 
-                            }
+weight:"600"
 
-                        },
+}
 
-                        grid: {
+}
 
-                            color: "#e5e7eb"
+},
 
-                        }
+y:{
 
-                    }
+beginAtZero:true,
 
-                }
+ticks:{
 
-            }
+precision:0,
 
-        });
+stepSize:1,
 
-    }
+color:"#374151",
 
-    // ==========================
-    // Attendance Chart
-    // ==========================
+font:{
 
-    const attendanceChart = document.getElementById("attendanceChart");
+size:13,
 
-    if (attendanceChart) {
+weight:"600"
 
-        new Chart(attendanceChart, {
+}
 
-            type: "doughnut",
+},
 
-            data: {
+grid:{
 
-                labels: [
+color:"#E5E7EB"
 
-                    "Present",
+}
 
-                    "Absent",
+}
 
-                    "Leave"
+}
 
-                ],
+}
 
-                datasets: [{
+});
 
-                    data: [
+}
 
-                        <?= $present ?>,
+/* ======================
+Attendance Chart
+====================== */
 
-                        <?= $absent ?>,
+const pie=document.getElementById("attendanceChart");
 
-                        <?= $leave ?>
+if(pie){
 
-                    ],
+new Chart(pie,{
 
-                    backgroundColor: [
+type:"doughnut",
 
-                        "#198754",
+data:{
 
-                        "#DC3545",
+labels:[
 
-                        "#FFC107"
+"Present",
 
-                    ],
+"Absent",
 
-                    borderWidth: 2,
+"Leave"
 
-                    hoverOffset: 12
+],
 
-                }]
+datasets:[{
 
-            },
+data:attendanceData,
 
-            options: {
+backgroundColor:[
 
-                responsive: true,
+"#22C55E",
 
-                maintainAspectRatio: false,
+"#EF4444",
 
-                cutout: "65%",
+"#F59E0B"
 
-                animation: {
+],
 
-                    animateRotate: true,
+borderWidth:3,
 
-                    duration: 1500
+hoverOffset:15
 
-                },
+}]
 
-                plugins: {
+},
 
-                    legend: {
+options:{
 
-                        position: "bottom",
+responsive:true,
 
-                        labels: {
+maintainAspectRatio:false,
 
-                            usePointStyle: true,
+cutout:"70%",
 
-                            pointStyle: "circle",
+plugins:{
 
-                            padding: 20,
+legend:{
 
-                            color: "#374151",
+position:"bottom",
 
-                            font: {
+labels:{
 
-                                size: 13,
+padding:20,
 
-                                weight: "bold"
+usePointStyle:true,
 
-                            }
+pointStyle:"circle",
 
-                        }
+color:"#374151",
 
-                    }
+font:{
 
-                }
+size:13,
 
-            }
+weight:"600"
 
-        });
+}
 
-    }
+}
+
+}
+
+},
+
+animation:{
+
+duration:1800
+
+}
+
+}
+
+});
+
+}
 
 });
 
 </script>
+
+<?php require_once '../includes/footer.php'; ?>
