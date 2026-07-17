@@ -14,14 +14,17 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $id = (int)$_GET['id'];
 
-$query = "SELECT * FROM employees WHERE id = ?";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $id);
+$query = "SELECT * FROM employees WHERE id=?";
+
+$stmt = mysqli_prepare($conn,$query);
+
+mysqli_stmt_bind_param($stmt,"i",$id);
+
 mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);
 
-if (mysqli_num_rows($result) != 1) {
+if(mysqli_num_rows($result)!=1){
     redirect('index.php');
 }
 
@@ -35,88 +38,175 @@ require_once '../includes/topbar.php';
 
 <div class="dashboard">
 
-<div class="card shadow">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<div class="card-header bg-info text-white">
+<div>
 
-<h3>Employee Profile</h3>
+<h2 class="fw-bold">
+
+<i class="bi bi-person-badge-fill text-primary"></i>
+
+Employee Profile
+
+</h2>
+
+<p class="text-muted mb-0">
+
+View complete employee information
+
+</p>
 
 </div>
+
+<a href="index.php" class="btn btn-secondary">
+
+<i class="bi bi-arrow-left"></i>
+
+Back
+
+</a>
+
+</div>
+
+<div class="card shadow-lg border-0">
 
 <div class="card-body">
 
 <div class="row">
 
-<div class="col-md-3 text-center">
+<!-- Left Profile -->
+
+<div class="col-lg-4 text-center border-end">
+
+<?php
+
+$image = !empty($employee['profile_image'])
+            ? "../assets/uploads/employees/".$employee['profile_image']
+            : "../assets/uploads/employees/default.png";
+
+?>
 
 <img
-src="../assets/uploads/employees/<?= $employee['profile_image']; ?>"
-class="img-fluid rounded-circle border"
-style="width:180px;height:180px;object-fit:cover;">
+src="<?= $image; ?>"
+class="rounded-circle shadow mb-3"
+width="180"
+height="180"
+style="object-fit:cover;"
+onerror="this.src='../assets/uploads/employees/default.png';">
 
-<h4 class="mt-3">
+<h3 class="fw-bold">
+
 <?= htmlspecialchars($employee['full_name']); ?>
-</h4>
 
-<p class="text-muted">
+</h3>
+
+<p class="text-muted mb-2">
+
 <?= htmlspecialchars($employee['designation']); ?>
+
 </p>
 
 <?php if($employee['status']=="Active"){ ?>
 
-<span class="badge bg-success">
+<span class="badge bg-success fs-6 px-3 py-2">
+
+<i class="bi bi-check-circle-fill"></i>
+
 Active
+
 </span>
 
-<?php } else { ?>
+<?php }else{ ?>
 
-<span class="badge bg-danger">
+<span class="badge bg-danger fs-6 px-3 py-2">
+
+<i class="bi bi-x-circle-fill"></i>
+
 Inactive
+
 </span>
 
 <?php } ?>
 
+<hr>
+
+<div class="text-start">
+
+<p>
+
+<i class="bi bi-envelope-fill text-primary"></i>
+
+<strong>Email</strong><br>
+
+<?= htmlspecialchars($employee['email']); ?>
+
+</p>
+
+<p>
+
+<i class="bi bi-telephone-fill text-success"></i>
+
+<strong>Phone</strong><br>
+
+<?= htmlspecialchars($employee['phone']); ?>
+
+</p>
+
 </div>
 
-<div class="col-md-9">
+</div>
 
-<table class="table table-bordered">
+<!-- Right Details -->
+
+<div class="col-lg-8">
+
+<h4 class="mb-4">
+
+Employee Details
+
+</h4>
+
+<table class="table table-bordered table-striped align-middle">
+
+<tbody>
 
 <tr>
 
-<th width="30%">Employee Code</th>
+<th width="35%">
 
-<td><?= $employee['employee_code']; ?></td>
+<i class="bi bi-upc-scan"></i>
+
+Employee Code
+
+</th>
+
+<td><?= htmlspecialchars($employee['employee_code']); ?></td>
 
 </tr>
 
 <tr>
 
-<th>Email</th>
+<th>
 
-<td><?= htmlspecialchars($employee['email']); ?></td>
+<i class="bi bi-gender-ambiguous"></i>
 
-</tr>
+Gender
 
-<tr>
+</th>
 
-<th>Phone</th>
-
-<td><?= htmlspecialchars($employee['phone']); ?></td>
+<td><?= htmlspecialchars($employee['gender']); ?></td>
 
 </tr>
 
 <tr>
 
-<th>Gender</th>
+<th>
 
-<td><?= $employee['gender']; ?></td>
+<i class="bi bi-building"></i>
 
-</tr>
+Department
 
-<tr>
-
-<th>Department</th>
+</th>
 
 <td><?= htmlspecialchars($employee['department']); ?></td>
 
@@ -124,7 +214,13 @@ Inactive
 
 <tr>
 
-<th>Designation</th>
+<th>
+
+<i class="bi bi-briefcase-fill"></i>
+
+Designation
+
+</th>
 
 <td><?= htmlspecialchars($employee['designation']); ?></td>
 
@@ -132,43 +228,90 @@ Inactive
 
 <tr>
 
-<th>Salary</th>
+<th>
 
-<td>₹ <?= number_format($employee['salary'],2); ?></td>
+<i class="bi bi-currency-rupee"></i>
+
+Salary
+
+</th>
+
+<td>
+
+₹ <?= number_format($employee['salary']); ?>
+
+</td>
 
 </tr>
 
 <tr>
 
-<th>Joining Date</th>
+<th>
 
-<td><?= $employee['joining_date']; ?></td>
+<i class="bi bi-calendar-event"></i>
+
+Joining Date
+
+</th>
+
+<td>
+
+<?= date("d M Y",strtotime($employee['joining_date'])); ?>
+
+</td>
 
 </tr>
+
+<?php if(isset($employee['created_at'])){ ?>
 
 <tr>
 
-<th>Created At</th>
+<th>
 
-<td><?= $employee['created_at']; ?></td>
+<i class="bi bi-clock-history"></i>
+
+Created At
+
+</th>
+
+<td>
+
+<?= date("d M Y h:i A",strtotime($employee['created_at'])); ?>
+
+</td>
 
 </tr>
+
+<?php } ?>
+
+</tbody>
 
 </table>
 
-<a href="edit.php?id=<?= $employee['id']; ?>" class="btn btn-warning">
+<div class="mt-4">
+
+<a
+href="edit.php?id=<?= $employee['id']; ?>"
+class="btn btn-warning">
 
 <i class="bi bi-pencil-square"></i>
 
-Edit
+Edit Employee
 
 </a>
 
-<a href="index.php" class="btn btn-secondary">
+<a
+href="delete.php?id=<?= $employee['id']; ?>"
+class="btn btn-danger"
+onclick="return confirm('Delete this employee?')">
 
-Back
+<i class="bi bi-trash"></i>
+
+Delete
 
 </a>
+
+</div>
 
 </div>
 

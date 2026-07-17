@@ -1,52 +1,76 @@
 <div class="sidebar">
 
     <div class="logo">
-         StaffSync
+        <i class="bi bi-people-fill"></i>
+        <span>StaffSync</span>
     </div>
 
-    <a href="../dashboard/index.php">
-        <i class="bi bi-speedometer2"></i> Dashboard
-    </a>
+    <ul class="sidebar-menu">
 
-    <a href="../employee/index.php">
-        <i class="bi bi-people"></i> Employees
-    </a>
+        <li>
+            <a href="../dashboard/index.php">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
 
-    <a href="../department/index.php">
-        <i class="bi bi-building"></i> Departments
-    </a>
-    <a href="../designation/index.php">
-        <i class="bi bi-diagram-3"></i> Designations
-   <li class="nav-item">
+        <li>
+            <a href="../employee/index.php">
+                <i class="bi bi-people"></i>
+                <span>Employees</span>
+            </a>
+        </li>
 
-    <a class="nav-link" href="../attendance/index.php">
+        <li>
+            <a href="../department/index.php">
+                <i class="bi bi-building"></i>
+                <span>Departments</span>
+            </a>
+        </li>
 
-        <i class="bi bi-calendar-check"></i>
+        <li>
+            <a href="../designation/index.php">
+                <i class="bi bi-diagram-3"></i>
+                <span>Designations</span>
+            </a>
+        </li>
 
-        <span>Attendance</span>
+        <li class="menu-title">
+            Attendance
+        </li>
 
-    </a>
+        <li>
+            <a href="../attendance/index.php">
+                <i class="bi bi-calendar-check"></i>
+                <span>Manage Attendance</span>
+            </a>
+        </li>
 
-</li>
+        <li>
+            <a href="../reports/attendance_report.php">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Attendance Report</span>
+            </a>
+        </li>
 
-<li class="nav-item ms-3">
+        <li class="menu-title">
+            Reports
+        </li>
 
-    <a class="nav-link" href="../reports/attendance_report.php">
+        <li>
+            <a href="../reports/employee_report.php">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Employee Report</span>
+            </a>
+        </li>
 
-        <i class="bi bi-file-earmark-text"></i>
+        <li class="mt-auto">
+            <a href="../auth/logout.php" class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </li>
 
-        <span>Attendance Report</span>
-
-    </a>
-
-</li>
-
-     <a href="../reports/employee_report.php">
-        <i class="bi bi-file-earmark-bar-graph"></i>
-        <span>Reports</span>
-    </a>
-    <a href="../auth/logout.php">
-        <i class="bi bi-box-arrow-right"></i> Logout
-    </a>
+    </ul>
 
 </div>

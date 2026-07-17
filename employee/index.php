@@ -28,7 +28,7 @@ if($search != ""){
 
     $searchLike = "%".$search."%";
 
-    $countQuery = "SELECT COUNT(*) AS total
+    $countQuery = "SELECT COUNT(*) total
                    FROM employees
                    WHERE full_name LIKE ?
                    OR email LIKE ?";
@@ -63,7 +63,7 @@ if($search != ""){
 
 }else{
 
-    $countQuery = "SELECT COUNT(*) AS total FROM employees";
+    $countQuery = "SELECT COUNT(*) total FROM employees";
 
     $countResult = mysqli_query($conn,$countQuery);
 
@@ -99,11 +99,24 @@ require_once '../includes/topbar.php';
 
 <div class="dashboard">
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2>Employees</h2>
+<div>
+<h2 class="fw-bold mb-1">
+<i class="bi bi-people-fill text-primary"></i>
+Employees
+</h2>
+
+<p class="text-muted mb-0">
+Total Employees :
+<strong><?= $total; ?></strong>
+</p>
+
+</div>
 
 <a href="create.php" class="btn btn-primary">
+
+<i class="bi bi-plus-circle"></i>
 
 Add Employee
 
@@ -131,26 +144,46 @@ Add Employee
 
 <?php } ?>
 
-<form class="row mb-3">
+<form class="row mb-4">
 
-<div class="col-md-4">
+<div class="col-md-5">
+
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-search"></i>
+
+</span>
 
 <input
 type="text"
 name="search"
 class="form-control"
-placeholder="Search by name or email..."
+placeholder="Search by Name or Email..."
 value="<?= htmlspecialchars($search); ?>">
+
+</div>
 
 </div>
 
 <div class="col-md-2">
 
-<button class="btn btn-dark">
+<button class="btn btn-dark w-100">
 
 Search
 
 </button>
+
+</div>
+
+<div class="col-md-2">
+
+<a href="index.php" class="btn btn-secondary w-100">
+
+Reset
+
+</a>
 
 </div>
 
@@ -160,19 +193,29 @@ Search
 
 <div class="card-body">
 
-<table class="table table-hover table-bordered">
+<div class="table-responsive">
+
+<table class="table table-hover align-middle">
 
 <thead class="table-dark">
 
 <tr>
 
 <th>ID</th>
+
+<th>Photo</th>
+
 <th>Code</th>
+
 <th>Name</th>
+
 <th>Email</th>
+
 <th>Department</th>
+
 <th>Status</th>
-<th>Action</th>
+
+<th width="220">Action</th>
 
 </tr>
 
@@ -180,15 +223,33 @@ Search
 
 <tbody>
 
+<?php if(mysqli_num_rows($result)>0){ ?>
+
 <?php while($row=mysqli_fetch_assoc($result)){ ?>
 
 <tr>
 
 <td><?= $row['id']; ?></td>
 
-<td><?= $row['employee_code']; ?></td>
+<td>
 
-<td><?= htmlspecialchars($row['full_name']); ?></td>
+<img
+src="../uploads/<?= $row['profile_image']; ?>"
+width="45"
+height="45"
+class="rounded-circle border"
+style="object-fit:cover;"
+onerror="this.src='../uploads/default.png';">
+
+</td>
+
+<td><?= htmlspecialchars($row['employee_code']); ?></td>
+
+<td>
+
+<strong><?= htmlspecialchars($row['full_name']); ?></strong>
+
+</td>
 
 <td><?= htmlspecialchars($row['email']); ?></td>
 
@@ -196,36 +257,70 @@ Search
 
 <td>
 
-<span class="badge <?= ($row['status']=='Active') ? 'bg-success' : 'bg-secondary'; ?>">
+<?php if($row['status']=="Active"){ ?>
 
-<?= $row['status']; ?>
+<span class="badge bg-success">
+
+Active
 
 </span>
+
+<?php }else{ ?>
+
+<span class="badge bg-danger">
+
+Inactive
+
+</span>
+
+<?php } ?>
 
 </td>
 
 <td>
 
-<a href="view.php?id=<?= $row['id']; ?>" class="btn btn-info btn-sm">
+<a
+href="view.php?id=<?= $row['id']; ?>"
+class="btn btn-info btn-sm">
 
-View
+<i class="bi bi-eye"></i>
 
 </a>
 
-<a href="edit.php?id=<?= $row['id']; ?>" class="btn btn-warning btn-sm">
+<a
+href="edit.php?id=<?= $row['id']; ?>"
+class="btn btn-warning btn-sm">
 
-Edit
+<i class="bi bi-pencil-square"></i>
 
 </a>
 
 <a
 href="delete.php?id=<?= $row['id']; ?>"
 class="btn btn-danger btn-sm"
-onclick="return confirm('Deactivate employee?')">
+onclick="return confirm('Deactivate Employee?')">
 
-Delete
+<i class="bi bi-trash"></i>
 
 </a>
+
+</td>
+
+</tr>
+
+<?php } ?>
+
+<?php }else{ ?>
+
+<tr>
+
+<td colspan="8" class="text-center text-muted py-5">
+
+<i class="bi bi-folder2-open fs-1"></i>
+
+<br><br>
+
+No Employees Found
 
 </td>
 
@@ -237,9 +332,11 @@ Delete
 
 </table>
 
-<nav>
+</div>
 
-<ul class="pagination">
+<nav class="mt-4">
+
+<ul class="pagination justify-content-center">
 
 <?php for($i=1;$i<=$totalPages;$i++){ ?>
 
