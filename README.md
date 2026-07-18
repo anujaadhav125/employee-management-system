@@ -3,6 +3,7 @@
 StaffSync is a modern Human Resource Management System (HRMS) developed using **PHP**, **MySQL**, **Bootstrap 5**, **JavaScript**, and **Chart.js**. It helps organizations manage employees, departments, attendance, designations, and reports through an interactive dashboard.
 
 ---
+Live Demo: https://staffsync-adnhuajva.freehosting.dev/staffsync/
 
 ## 🚀 Features
 
